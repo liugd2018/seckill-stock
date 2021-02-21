@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liugd.stock.server.mapper.StockMapper">
+    <insert id="insertStockList" parameterType="com.liugd.stock.common.entity.StockEntity">
+        insert into t_stock(stock_id,product_name,store_code,product_id,total_num,lock_num,surplus_num,
+        create_time,create_user,update_time,update_user,del_flg) values
+        <foreach collection="stockEntityList" item="stockEntity" separator="," >
+            (#{stockEntity.stockId},#{stockEntity.productName},#{stockEntity.storeCode},#{stockEntity.productId},
+            #{stockEntity.totalNum},#{stockEntity.lockNum},#{stockEntity.surplusNum},
+            #{stockEntity.createTime},#{stockEntity.createUser},#{stockEntity.updateTime},#{stockEntity.updateUser},'0')
+        </foreach>
+    </insert>
+    
+    <insert id="insertStockExistUpdateStock" parameterType="com.liugd.stock.common.entity.StockEntity">
+        insert into t_stock(id,product_name,store_code,product_id,total_num,lock_num,surplus_num,
+        create_time,create_user,update_time,update_user,del_flg) values (#{id},#{productName},#{storeCode},#{productId},
+        #{totalNum},#{lockNum},#{surplusNum},#{createTime},#{createUser},#{updateTime},#{updateUser},'0')
+        ON DUPLICATE key UPDATE lockNum = lockNum + 1 , surplusNum = surplusNum - 1
+    </insert>
+
+    <update id="updateStockLockProduct">
+        update t_stock set lock_num = lock_num + #{num} , surplus_num = surplus_num - #{num}
+        where store_code = #{storeCode} and product_id = #{productId} and surplusNum > 0 AND del_flag = 0
+    </update>
+
+    <update id="updateStockProduct">
+        update t_stock set total_num = total_num + #{addNum} , surplus_num = surplus_num + #{addNum}
+        where store_code = #{storeCode} and product_id = #{productId}  AND del_flag = 0
+    </update>
+
+    <update id="updateStockUnLockProduct">
+        update t_stock set lock_num = lock_num - #{num} , surplus_num = surplus_num + #{num}
+        where store_code = #{storeCode} and product_id = #{productId} AND del_flag = 0
+    </update>
+
+
+    <select id="queryStockCodeProduct" resultType="com.liugd.stock.common.entity.StockEntity">
+        select product_name,store_code,product_id,total_num,lock_num,surplus_num from t_stock
+        where store_code = #{storeCode} and product_id = #{productId} AND del_flag = 0
+    </select>
+</mapper>

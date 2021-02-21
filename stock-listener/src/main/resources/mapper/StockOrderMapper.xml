@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liugd.stock.listener.mapper.StockOrderMapper">
+    <insert id="insertStockList" parameterType="com.liugd.stock.common.entity.StockOrderEntity">
+        insert into t_order_stock(stock_order_id, stock_id, order_id, store_code, product_id,
+        lock_num, create_time,create_user,update_time,update_user,del_flg) values
+        <foreach collection="stockEntityList" item="stockEntity" separator="," >
+            (#{stockOrderEntities.stockOrderId},#{stockOrderEntities.stockId},#{stockOrderEntities.orderId},
+            #{stockOrderEntities.storeCode},#{stockOrderEntities.productId},
+            #{stockOrderEntities.lockNum},#{stockOrderEntities.createTime},#{stockOrderEntities.createUser},
+            #{stockOrderEntities.updateTime},#{stockOrderEntities.updateUser},'0')
+        </foreach>
+    </insert>
+    
+    <insert id="insertStockExistUpdateStock" parameterType="com.liugd.stock.common.entity.StockOrderEntity">
+        insert into t_order_stock(stock_order_id, stock_id, order_id, store_code, product_id,
+        lock_num, create_time,create_user,update_time,update_user,del_flg) values
+        (#{stockOrderId},#{stockId},#{orderId},#{storeCode},#{productId},#{lockNum},#{createTime},#{createUser},
+        #{updateTime},#{updateUser},'0')
+        ON DUPLICATE key UPDATE lockNum = lockNum + 1
+    </insert>
+
+
+
+    <update id="updateStockLock" >
+        update t_order_stock set lock_num = lock_num + #{lockNum} , update_time = CURRENT_TIME, update_user = #{updateUser}
+        where store_code = #{storeCode} and product_id = #{productId} and  order_id = #{orderId} AND del_flag = '0'
+    </update>
+
+    <update id="updateStockUnlock" >
+        update t_order_stock set lock_num = lock_num - #{lockNum} , update_time = CURRENT_TIME, update_user = #{updateUser}
+        where store_code = #{storeCode} and product_id = #{productId} and  order_id = #{orderId} AND del_flag = '0'
+    </update>
+
+    <select id="queryStockCodeAndProductIdAndOrderId" resultType="com.liugd.stock.common.entity.StockOrderEntity">
+        select tock_order_id, stock_id, order_id, store_code, product_id,lock_num from t_order_stock
+        where store_code = #{storeCode} and product_id = #{productId} and  order_id = #{orderId} AND del_flag = '0'
+    </select>
+</mapper>

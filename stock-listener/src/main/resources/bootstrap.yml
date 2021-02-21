@@ -1,0 +1,62 @@
+server:
+  port: ${properties.application.port}
+
+spring:
+  application:
+    name: ${properties.application.name}
+  cloud:
+    # Nacos 作为注册中心的配置项
+    nacos:
+       # Nacos Config 配置项，对应 NacosConfigProperties 配置属性类
+      config:
+        server-addr: ${properties.nacos.config.server-addr} # Nacos 服务器地址
+        namespace: ${properties.nacos.config.namespace} # 使用的 Nacos 的命名空间，默认为 null
+        group: ${properties.nacos.config.group} # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
+        name: ${properties.nacos.config.name} # 使用的 Nacos 配置集的 dataId，默认为 spring.application.name
+        file-extension: ${properties.nacos.config.file-extension} # 使用的 Nacos 配置集的 dataId 的文件拓展名，同时也是 Nacos 配置集的配置格式，默认为 properties
+      discovery:
+        server-addr: ${properties.nacos.discovery.server-addr} # Nacos 服务器地址
+
+
+# Dubbo 配置项，对应 DubboConfigurationProperties 类
+dubbo:
+  scan:
+    base-packages: com.gd.mall.order.provider.service # 指定 Dubbo 服务实现类的扫描基准包
+  # Dubbo 服务暴露的协议配置，对应 ProtocolConfig Map
+  protocols:
+    dubbo:
+      name: dubbo # 协议名称
+      port: -1 # 协议端口，-1 表示自增端口，从 20880 开始
+  # Dubbo 服务注册中心配置，对应 RegistryConfig 类
+  registry:
+    address: spring-cloud://${properties.nacos.discovery.server-addr} # 指定 Dubbo 服务注册中心的地址
+  # Spring Cloud Alibaba Dubbo 专属配置项，对应 DubboCloudProperties 类
+  cloud:
+    subscribed-services: '' # 设置订阅的应用列表，默认为 * 订阅所有应用
+
+  application:
+    id: ${properties.application.name}
+
+
+---
+spring:
+  profiles: dev
+  sleuth:
+    stream:
+      enabled: false
+
+properties:
+  application:
+    name: stock.listener
+    port: 9001
+  nacos:
+    config:
+      port: 8848
+      server-addr: 172.17.8.21:${properties.nacos.config.port}
+      namespace: dev
+      group: stock
+      name: ${properties.application.name}
+      file-extension: yaml
+    discovery:
+      port: 8848
+      server-addr: 172.17.8.21:${properties.nacos.discovery.port}

@@ -1,0 +1,90 @@
+server:
+  port: 8081
+
+
+spring:
+  application:
+    name: stock.server
+
+  # 数据库配置
+  datasource:
+    name: sp
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.17.8.21:3307/stock?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    #hikari数据库连接池
+    hikari:
+      pool-name: Retail_HikariCP
+      minimum-idle: 5 #最小空闲连接数量
+      idle-timeout: 180000 #空闲连接存活最大时间，默认600000（10分钟）
+      maximum-pool-size: 10 #连接池最大连接数，默认是10
+      auto-commit: true  #此属性控制从池返回的连接的默认自动提交行为,默认值：true
+      max-lifetime: 1800000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+      connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
+      connection-test-query: SELECT 1
+
+
+  # rabbitmq配置信息
+  rabbitmq:
+    #    host: 172.17.8.21
+    #    port: 5672
+    password: guest
+    username: guest
+    virtual-host: /
+    ##集群配置 addresses之间用逗号隔开
+    addresses: 172.17.8.21:5672
+    listener:
+      simple:
+        # 最小的消费者数量
+        concurrency: 5
+        # 最大的消费者数量
+        max-concurrency: 10
+        # 指定一个请求能处理多少个消息，如果有事务的话，必须大于等于transaction数量.
+        prefetch: 5
+
+  # redis 集群配置
+  redis:
+    cluster:
+      nodes:
+        - 172.17.8.21:7001
+        - 172.17.8.21:7002
+        - 172.17.8.21:7003
+        - 172.17.8.21:7004
+        - 172.17.8.21:7005
+        - 172.17.8.21:7006
+      max-redirects: 3
+
+    lettuce:
+      pool:
+        max-active: 1000
+        max-idle: 10
+        min-idle: 5 # 连接池中的最小空闲连接
+        max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+    password: 112233
+
+# 配置打印sql语句
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # xml扫描，多个目录用逗号或者分号分隔（告诉 Mapper 所对应的 XML 文件位置）
+  mapper-locations: classpath:**/*Mapper.xml
+
+
+stock:
+
+  product:
+    # 商品redis存储时间(分钟)
+    ttl: 2000
+  # 锁库存等待时间
+  redisson:
+    lock: 5000
+  lock:
+    ttl: 50000
+  # 自动解锁
+  auto-unlock:
+    # 毫秒
+    ttl: 900000
+  order:
+    # order redis存储时间
+    storage-time: 100000
