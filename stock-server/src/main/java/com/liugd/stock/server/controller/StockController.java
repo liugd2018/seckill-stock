@@ -33,7 +33,6 @@ public class StockController {
      * @throws BusinessException
      */
     @PostMapping("/lock")
-
     public void stockLock(@RequestBody StockProductDto stockProductDto) throws BusinessException {
         // TODO 幂等需要添加
         try {

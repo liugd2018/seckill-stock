@@ -27,6 +27,16 @@ public class JsonUtil {
         return jsonObject;
     }
 
+    public static <T> T parseObjectNoException(String jsonString, Class<T> clazz) {
+        T jsonObject = null;
+        try {
+            jsonObject = mapper.readValue(jsonString, clazz);
+        } catch (IOException e){
+            log.error("json转换失败.", e);
+        }
+        return jsonObject;
+    }
+
     public static String toString(Object object) throws IOException {
         return mapper.writeValueAsString(object);
     }

@@ -6,13 +6,14 @@ package com.liugd.stock.common.exception;
  * @author <a href="mailto:liugd2020@gmail.com">liuguodong</a>
  * @since 1.0
  */
-public class BusinessException extends Exception{
+public class BusinessException extends RuntimeException{
 
     private int code;
 
     private String msg;
 
     public BusinessException(int code, String msg) {
+        super(msg);
         this.code = code;
         this.msg = msg;
     }

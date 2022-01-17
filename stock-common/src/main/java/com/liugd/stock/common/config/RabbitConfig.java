@@ -68,6 +68,26 @@ public class RabbitConfig {
     }
 
     /**
+     * 操作日志
+     * @return
+     */
+    @Bean
+    public Queue logQueue(){
+        return new Queue(Constant.RabbitQueue.LOG_QUEUE_NAME);
+    }
+
+    @Bean
+    public DirectExchange logDirectExchange(){
+        return new DirectExchange(Constant.RabbitQueue.LOG_EXCHANGE_NAME);
+    }
+
+    @Bean
+    public Binding logBinding(){
+        return  BindingBuilder.bind(logQueue())
+                .to(logDirectExchange()).with(Constant.RabbitQueue.LOG_ROUTING_KEY);
+    }
+
+    /**
      *
      * 解锁库存同步mysql mq
      * @return

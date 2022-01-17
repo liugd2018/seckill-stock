@@ -195,5 +195,22 @@ public class Constant {
          * 清除本地缓存 exchange
          */
         String CLEAN_LOADING_CACHE_EXCHANGE = "clean.loadingCache.exchange";
+
+
+        /**
+         * log(同步mysql)
+         */
+        String LOG_QUEUE_NAME = "operation.log.queue";
+
+        /**
+         * log (同步mysql)
+         */
+        String LOG_EXCHANGE_NAME = "operation.log.exchange";
+
+        /**
+         * log (同步mysql)
+         */
+        String LOG_ROUTING_KEY = "operation.log.routing.key";
+
     }
 }

@@ -96,13 +96,7 @@ public class StockOperationListener {
 
             // TODO 调用解锁商品接口
 
-
-
         }
-
-
-
-
 
     }
 
